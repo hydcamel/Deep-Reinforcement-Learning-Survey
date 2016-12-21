@@ -2,12 +2,75 @@
 ***Mistakes teach us to clarify what we really want and how we want to live.*** That's the spirit of reinforcement 
 learning: learning from the mistakes. Let's be the explorer in reinforcement learning!	
 
+
+## Reinforcement Learning
+
+- :star::star: ***Human-level control through deep reinforcement learning***, [[Nature 2015]](http://home.uchicago.edu/~arij/journalclub/papers/2015_Mnih_et_al.pdf)
+  - Most optimization algorithms assume that the samples are independently and identically distributed,
+      while for reinforcement learning, the data is a sequence of action, which breaks the assumption.
+  - Strong correlation btn data => break the assumption of stochastic gradient-based algorithms(re-sampling)
+  - Experience replay(off-policy)
+  - Iterative update Q-value
+  - [Source code [Torch]](https://sites.google.com/a/deepmind.com/dqn)
+- :star: ***High-Dimensional Continuous Control Using Generalized Advantage Estimation*** [[ICLR 2016]](https://arxiv.org/abs/1506.02438)
+	- John Schulman, Philipp Moritz, Sergey Levine, Michael Jordan, Pieter Abbeel
+	- In extremely high dimensional task(like continuous control in 3D environment), stability is a key point.
+	- Propose an effective variance reduction scheme for policy gradients, which called generalized advantage estimation (GAE)
+	-  Motivation of GAE: Supposed we have fixed length of steps, from eq.15,  we know that the bias of each advantage function is **k-dependent**. So, as k increases, the biased term becomes more ignorable, while the variance increases and vice versa. (if you found this concept is abstract, think of MC is unbiased but with high variance, while TD is biased, but with los variance)
+	-  ***λ*** is a new concept included in this paper. 
+		-  If λ = 0 (like eq.17), then we have low variance, and is biased
+		-  If λ = 1 (like eq.18), then we have high variance, and is unbased
+- :star: ***Recurrent Models of Visual Attention*** [[NIPS 2014]](https://arxiv.org/abs/1406.6247) 
+  - Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu
+  - Motivation: computationally expensive when dealing with large image. Many attention methods computation cost is propotional to the image size.
+  - Use the action control to attend part of image (define a Gaussian, and use treat the location(mean of Gaussian) as action)
+  - Can be viewed as POMDP (partially observation markov decision process)
+  - The location network is a 2D-Gaussian distribution
+  - Action is stochastically drawn from the distribution of location network
+  - Reward can be task-dependent (this paper is used in classification)
+  - Use the policy gradient to optimize
+- :star: ***Asynchronous Methods for Deep Reinforcement Learning*** [[ICML 2016]](https://arxiv.org/abs/1602.01783)
+  - Volodymyr Mnih, Adrià Puigdomènech Badia, Mehdi Mirza, Alex Graves, Timothy P. Lillicrap, Tim Harley, 
+      David Silver, Koray Kavukcuoglu 
+  - On-policy updates
+  - Implementation from others:  [async-rl](https://github.com/muupan/async-rl)
+  - [Asynchronous SGD](https://cxwangyi.wordpress.com/2013/04/09/why-asynchronous-sgd-works-better-than-its-synchronous-counterpart/), 
+      explain what "asynchronous" means. 
+  - [Tuning Deep Learning Episode 1: DeepMind's A3C in Torch](http://www.allinea.com/blog/201607/tuning-deep-learning-episode-1-deepminds-a3c-torch)
+- :star: ***Learning Hand-Eye Coordination for Robotic Grasping with Deep Learning and Large-Scale Data Collection*** 
+  [[arXiv 2016]](http://arxiv.org/abs/1603.02199)
+  - Sergey Levine, Peter Pastor, Alex Krizhevsky, Deirdre Quillen
+  - [Deep Learning for Robots: Learning from Large-Scale Interaction]
+      (https://research.googleblog.com/2016/03/deep-learning-for-robots-learning-from.html)
+- :star: ***Dueling Network Architectures for Deep Reinforcement Learning*** [[ICML 2016]](http://arxiv.org/abs/1511.06581)
+  - Ziyu Wang, Tom Schaul, Matteo Hessel, Hado van Hasselt, Marc Lanctot, Nando de Freitas
+  - Best Paper in ICML 2016
+  - Pose the question: Is conventional CNN suitable for RL tasks?
+  - Two stream network(state-value and advantage funvtion)
+  - Focusing on innovating a neural network architecture that is better suited for model-free RL
+  - Torch blog - [Dueling Deep Q-Networks](http://torch.ch/blog/2016/04/30/dueling_dqn.html)  
+- :star::star: ***Mastering the game of Go with deep neural networks and tree search*** [[Nature 2016]](https://vk.com/doc-44016343_437229031?dl=56ce06e325d42fbc72)
+  - David Silver, Aja Huang 
+  - First stage: supervised learning policy network, including rollout policy and SL policy network(learn the knowledge from human experts)
+    -  Rollout policy is used for predicting **fast** but relatively inaccurate decision
+    -  SL policy network is used for initialization of RL policy network(improved by policy gradient) 
+  - To prevent overfit, auto-generate the sample from self-play(half) and train with the KGS dataset(half)
+  - Use Monte Carlo tree search with policy network and value network. To understand the MCTS more, plz refer to [here](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Principle_of_operation)
+    - Selection: select the most promising action depends on Q+u(P) --> depth L
+    - Expansion: after L steps, create a new child
+    - Evaluation: evaluated by the mixture of value network and simulated rollout
+    - Backup: Calculate and store the Q(s,a), N(s,a), which is used in Selection
+- :star: ***Action-Conditional Video Prediction using Deep Networks in Atari Games*** [[NIPS 2015]](http://arxiv.org/abs/1507.08750)
+  - Junhyuk Oh, Xiaoxiao Guo, Honglak Lee, Richard Lewis, Satinder Singh, [[project page]](https://sites.google.com/a/umich.edu/junhyuk-oh/action-conditional-video-prediction)
+  - Long-term predictions on Atari games conditional on the action
+  - Using the predicted frame (more informative) to replace the exploration to improve the model-free controller
+  - Multiplicative Action-Conditional Transformation: if use ont-hot to represent the action :point_right: each matrix correspond to a transformation matrix
+  - Learning with Multi-Step Prediction (minimize the k steps accumulated error)
+  - Section 4.2 is really promising! 
+    - replace the real frame by predicted frames
+    - use prediction model to help agent explore the state visited least
 - ***Gradient Estimation Using Stochastic Computation Graphs*** [[NIPS 2015]](https://arxiv.org/abs/1506.05254)
 	- John Schulman, Nicolas Heess, Theophane Weber, Pieter Abbeel
-- ***Maximum Entropy Inverse Reinforcement Learning*** [[AAAI 2008]](https://www.cs.uic.edu/pub/Ziebart/Publications/maxentirl-bziebart.pdf)
-	- Brian D. Ziebart, Andrew Maas, J. Andrew Bagnell, and Anind K. Dey
-	- Close to the real case :point_right: the suboptimal case, optimal case can't cover all the state space, and alleviate the reward function ambiguity
-	- basic concept: plans with equivalent rewards have equal probabilities, and plans with higher rewards are exponentially more preferred.
 - ***Reinforcement Learning with Unsupervised Auxiliary Tasks*** [[arXiv 2016]](https://128.84.21.199/abs/1611.05397)
 	- Max Jaderberg, Volodymyr Mnih, Wojciech Marian Czarnecki, Tom Schaul, Joel Z Leibo, David Silver, Koray Kavukcuoglu
 	- Introduce an agent that also maximises many other **pseudo-reward** functions simultaneously by reinforcement learning
@@ -16,24 +79,6 @@ learning: learning from the mistakes. Let's be the explorer in reinforcement lea
 		- Pixel changes: maximally changing the pixels in each cell of an n*n non-overlapping grid placed over the input image :point_right: make the learner knows to move faster or avoid stopping (I guess)
 		- Network features: maximally activating each of the units in a specific hidden layer :point_right: to fully use the hidden units
 	- Section 4.1 "Unsupervised Reinforcement Learning" discuss why not use the pixel reconstruction loss
-- ***Apprenticeship Learning via Inverse Reinforcement Learning*** [[ICML 2004]](http://dl.acm.org/citation.cfm?id=1015430)
-	- Pieter Abbeel, Andrew Y. Ng
-	- The first time when apprenticeship is proposed
-	- Most of these methods try to directly mimic the demonstrator by applying a **supervised learning** algorithm to learn a direct mapping from the states to the actions. :point_right: only suitable for the case that the taskis to mimic the expert’s trajectory
-	- Reward function, rather than the policy or the value function, is the most succinct, robust, and transferable definition of the task,
-	- Basic concept: use the inverse reinforcement learning to recover the reward function from the expert and use the that reward function to find the optimal policy.
-	- Actually, Apprenticeship Learning doesn't need to find the correct reward function. Instead, it use the predicted reward function to find the policy that is similar to expert.
-	- From the experiments, the apprenticeship learning need less sample trajectory than action mimic.
-- ***Algorithms for Inverse Reinforcement Learning*** [[ICML 2000]](http://www.andrewng.org/portfolio/algorithms-for-inverse-reinforcement-learning/)
-	- Andrew Y. Ng, Stuart Russell
-	- In examing animal and human behavior we must consider the reward function as an unknown to be ascertained through empirical investigation.
-	- Recover the expert's reward function and this to generate desired behavior
-	- Use the eq.4 (see the derivation in the paper, which is quite clear)
-	- Avoid reward function ambiguity by adding margin λ|R|
-	- Use feature representation for the reward function
-		- Since the reward function is assumed to be the linear combination of features, this implies that **if two policy with similar accumulated feature expectation, the accumulated reward is similar**
-	- Experiment part shows IRL is soluble at least in **moderate** discrete, continuous space
-	- Reference: [Inverse Reinforcement Learning](https://people.eecs.berkeley.edu/~pabbeel/cs287-fa12/slides/inverseRL.pdf), by Pieter Abbeel.
 - ***Deep Reinforcement Learning with a Natural Language Action Space*** [[ACL 2016]](Deep Reinforcement Learning with a Natural Language Action Space)
 	- Ji He, Jianshu Chen, Xiaodong He, Jianfeng Gao, Lihong Li, Li Deng, Mari Ostendorf
 	- Task: String of text :point_right: state, several strings of text :point_right: potential actions
@@ -56,23 +101,6 @@ learning: learning from the mistakes. Let's be the explorer in reinforcement lea
 	- 	Use LSTM to interpret the state(in natural langiage form), and use DQN to select to corresponding action
 	-  Basically follow the [deepmind paper](http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html). With experience replay and mini-batch update
 	-  Using tSNE for the represnetation analysis is really cool (fig. 5)
-- :star: ***High-Dimensional Continuous Control Using Generalized Advantage Estimation*** [[ICLR 2016]](https://arxiv.org/abs/1506.02438)
-	- John Schulman, Philipp Moritz, Sergey Levine, Michael Jordan, Pieter Abbeel
-	- In extremely high dimensional task(like continuous control in 3D environment), stability is a key point.
-	- Propose an effective variance reduction scheme for policy gradients, which called generalized advantage estimation (GAE)
-	-  Motivation of GAE: Supposed we have fixed length of steps, from eq.15,  we know that the bias of each advantage function is **k-dependent**. So, as k increases, the biased term becomes more ignorable, while the variance increases and vice versa. (if you found this concept is abstract, think of MC is unbiased but with high variance, while TD is biased, but with los variance)
-	-  ***λ*** is a new concept included in this paper. 
-		-  If λ = 0 (like eq.17), then we have low variance, and is biased
-		-  If λ = 1 (like eq.18), then we have high variance, and is unbased
-- :star: ***Recurrent Models of Visual Attention*** [[NIPS 2014]](https://arxiv.org/abs/1406.6247) 
-  - Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu
-  - Motivation: computationally expensive when dealing with large image. Many attention methods computation cost is propotional to the image size.
-  - Use the action control to attend part of image (define a Gaussian, and use treat the location(mean of Gaussian) as action)
-  - Can be viewed as POMDP (partially observation markov decision process)
-  - The location network is a 2D-Gaussian distribution
-  - Action is stochastically drawn from the distribution of location network
-  - Reward can be task-dependent (this paper is used in classification)
-  - Use the policy gradient to optimize
 - ***Deterministic Policy Gradient Algorithms*** [[ICML 2014]](http://jmlr.org/proceedings/papers/v32/silver14.pdf)
   - D. Silver, G. Lever, N. Heess, T. Degris, D. Wierstra, M. Riedmiller
   - The deterministic policy gradient is just a special case for stochastic policy gradient
@@ -105,27 +133,7 @@ learning: learning from the mistakes. Let's be the explorer in reinforcement lea
 - ***Deep Reinforcement Learning with Double Q-learning*** [[AAAI 2016]](http://arxiv.org/abs/1509.06461)
   - Hado van Hasselt, Arthur Guez, David Silver 
   - Deal with overestimation of Q-values
-  - Separate action-select-Q and predict-Q 
-- :star: ***Asynchronous Methods for Deep Reinforcement Learning*** [[ICML 2016]](https://arxiv.org/abs/1602.01783)
-  - Volodymyr Mnih, Adrià Puigdomènech Badia, Mehdi Mirza, Alex Graves, Timothy P. Lillicrap, Tim Harley, 
-      David Silver, Koray Kavukcuoglu 
-  - On-policy updates
-  - Implementation from others:  [async-rl](https://github.com/muupan/async-rl)
-  - [Asynchronous SGD](https://cxwangyi.wordpress.com/2013/04/09/why-asynchronous-sgd-works-better-than-its-synchronous-counterpart/), 
-      explain what "asynchronous" means. 
-  - [Tuning Deep Learning Episode 1: DeepMind's A3C in Torch](http://www.allinea.com/blog/201607/tuning-deep-learning-episode-1-deepminds-a3c-torch)
-- :star: ***Learning Hand-Eye Coordination for Robotic Grasping with Deep Learning and Large-Scale Data Collection*** 
-  [[arXiv 2016]](http://arxiv.org/abs/1603.02199)
-  - Sergey Levine, Peter Pastor, Alex Krizhevsky, Deirdre Quillen
-  - [Deep Learning for Robots: Learning from Large-Scale Interaction]
-      (https://research.googleblog.com/2016/03/deep-learning-for-robots-learning-from.html)
-- :star: ***Dueling Network Architectures for Deep Reinforcement Learning*** [[ICML 2016]](http://arxiv.org/abs/1511.06581)
-  - Ziyu Wang, Tom Schaul, Matteo Hessel, Hado van Hasselt, Marc Lanctot, Nando de Freitas
-  - Best Paper in ICML 2016
-  - Pose the question: Is conventional CNN suitable for RL tasks?
-  - Two stream network(state-value and advantage funvtion)
-  - Focusing on innovating a neural network architecture that is better suited for model-free RL
-  - Torch blog - [Dueling Deep Q-Networks](http://torch.ch/blog/2016/04/30/dueling_dqn.html)   
+  - Separate action-select-Q and predict-Q  
 - ***Control of Memory, Active Perception, and Action in Minecraft*** [[arXiv 2016]](https://arxiv.org/abs/1605.09128)
   - Junhyuk Oh, Valliappa Chockalingam, Satinder Singh, Honglak Lee
   - Solving problem concerning to partial observability
@@ -140,24 +148,6 @@ learning: learning from the mistakes. Let's be the explorer in reinforcement lea
   - The different components of the observation may have different physical units and the ranges may vary 
       across environments. => solve by batch normalization
   - For exploration, adding the noise to the actor policy: µ0(st) = µ(st|θt µ) + N
-- :star::star: ***Mastering the game of Go with deep neural networks and tree search*** [[Nature 2016]](https://vk.com/doc-44016343_437229031?dl=56ce06e325d42fbc72)
-  - David Silver, Aja Huang 
-  - First stage: supervised learning policy network, including rollout policy and SL policy network(learn the knowledge from human experts)
-    -  Rollout policy is used for predicting **fast** but relatively inaccurate decision
-    -  SL policy network is used for initialization of RL policy network(improved by policy gradient) 
-  - To prevent overfit, auto-generate the sample from self-play(half) and train with the KGS dataset(half)
-  - Use Monte Carlo tree search with policy network and value network. To understand the MCTS more, plz refer to [here](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Principle_of_operation)
-    - Selection: select the most promising action depends on Q+u(P) --> depth L
-    - Expansion: after L steps, create a new child
-    - Evaluation: evaluated by the mixture of value network and simulated rollout
-    - Backup: Calculate and store the Q(s,a), N(s,a), which is used in Selection
-- :star::star: ***Human-level control through deep reinforcement learning***, [[Nature 2015]](http://home.uchicago.edu/~arij/journalclub/papers/2015_Mnih_et_al.pdf)
-  - Most optimization algorithms assume that the samples are independently and identically distributed,
-      while for reinforcement learning, the data is a sequence of action, which breaks the assumption.
-  - Strong correlation btn data => break the assumption of stochastic gradient-based algorithms(re-sampling)
-  - Experience replay(off-policy)
-  - Iterative update Q-value
-  - [Source code [Torch]](https://sites.google.com/a/deepmind.com/dqn)
 - ***Active Object Localization with Deep Reinforcement Learning*** [[ICCV 2015]](http://arxiv.org/abs/1511.06015)
   - Juan C. Caicedo, Svetlana Lazebnik
   - Agent learns to deform a bounding box using simple transformation action(map the object detection task to RL)   
@@ -166,17 +156,33 @@ learning: learning from the mistakes. Let's be the explorer in reinforcement lea
   (http://arxiv.org/abs/1512.04455)
   - Nicolas Heess, Jonathan J Hunt, Timothy P Lillicrap, David Silver
   - Use RNN to solve partially-observed problem  
-- :star: ***Action-Conditional Video Prediction using Deep Networks in Atari Games*** [[NIPS 2015]](http://arxiv.org/abs/1507.08750)
-  - Junhyuk Oh, Xiaoxiao Guo, Honglak Lee, Richard Lewis, Satinder Singh, [[project page]](https://sites.google.com/a/umich.edu/junhyuk-oh/action-conditional-video-prediction)
-  - Long-term predictions on Atari games conditional on the action
-  - Using the predicted frame (more informative) to replace the exploration to improve the model-free controller
-  - Multiplicative Action-Conditional Transformation: if use ont-hot to represent the action :point_right: each matrix correspond to a transformation matrix
-  - Learning with Multi-Step Prediction (minimize the k steps accumulated error)
-  - Section 4.2 is really promising! 
-    - replace the real frame by predicted frames
-    - use prediction model to help agent explore the state visited least
 - ***Playing Atari with Deep Reinforcement Learning*** [[NIPS 2013 Deep Learning Workshop]](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
   - Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves Ioannis Antonoglou, Daan Wierstra  
   
+  
+## Inverse Reinforcement Learning
+- ***Algorithms for Inverse Reinforcement Learning*** [[ICML 2000]](http://www.andrewng.org/portfolio/algorithms-for-inverse-reinforcement-learning/)
+	- Andrew Y. Ng, Stuart Russell
+	- In examing animal and human behavior we must consider the reward function as an unknown to be ascertained through empirical investigation.
+	- Recover the expert's reward function and this to generate desired behavior
+	- Use the eq.4 (see the derivation in the paper, which is quite clear)
+	- Avoid reward function ambiguity by adding margin λ|R|
+	- Use feature representation for the reward function
+		- Since the reward function is assumed to be the linear combination of features, this implies that **if two policy with similar accumulated feature expectation, the accumulated reward is similar**
+	- Experiment part shows IRL is soluble at least in **moderate** discrete, continuous space
+	- Reference: [Inverse Reinforcement Learning](https://people.eecs.berkeley.edu/~pabbeel/cs287-fa12/slides/inverseRL.pdf), by Pieter Abbeel.
+- ***Maximum Entropy Inverse Reinforcement Learning*** [[AAAI 2008]](https://www.cs.uic.edu/pub/Ziebart/Publications/maxentirl-bziebart.pdf)
+	- Brian D. Ziebart, Andrew Maas, J. Andrew Bagnell, and Anind K. Dey
+	- Close to the real case :point_right: the suboptimal case, optimal case can't cover all the state space, and alleviate the reward function ambiguity
+	- basic concept: plans with equivalent rewards have equal probabilities, and plans with higher rewards are exponentially more preferred.
+- ***Apprenticeship Learning via Inverse Reinforcement Learning*** [[ICML 2004]](http://dl.acm.org/citation.cfm?id=1015430)
+	- Pieter Abbeel, Andrew Y. Ng
+	- The first time when apprenticeship is proposed
+	- Most of these methods try to directly mimic the demonstrator by applying a **supervised learning** algorithm to learn a direct mapping from the states to the actions. :point_right: only suitable for the case that the taskis to mimic the expert’s trajectory
+	- Reward function, rather than the policy or the value function, is the most succinct, robust, and transferable definition of the task,
+	- Basic concept: use the inverse reinforcement learning to recover the reward function from the expert and use the that reward function to find the optimal policy.
+	- Actually, Apprenticeship Learning doesn't need to find the correct reward function. Instead, it use the predicted reward function to find the policy that is similar to expert.
+	- From the experiments, the apprenticeship learning need less sample trajectory than action mimic.
+
  # Suggest Paper
 - ***Maximum Entropy Inverse Reinforcement Learning*** [[AAAI 2008]](https://www.cs.uic.edu/pub/Ziebart/Publications/maxentirl-bziebart.pdf)
